@@ -1,0 +1,40 @@
+﻿@model BookingKS.Models.PhieuDatPhong
+
+@{
+    ViewBag.Title = "ThanhToan";
+}
+
+
+
+
+<h2>Thanh toán</h2>
+
+@using (Html.BeginForm("Payment", "Reservation", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div>
+        <h4>Thông tin đặt cọc</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>Tên khách hàng</dt>
+            <dd>@Html.DisplayFor(model => model.KhachHang.tenKH)</dd>
+            <dt>Ngày nhận phòng</dt>
+            <dd>@Html.DisplayFor(model => model.ngayDen)</dd>
+            <dt>Ngày trả phòng</dt>
+            <dd>@Html.DisplayFor(model => model.ngayDi)</dd>
+            <dt>Số tiền đặt cọc</dt>
+            <dd>@Html.DisplayFor(model => model.tongTienCoc)</dd>
+        </dl>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.soNguoi)
+        @Html.TextBoxFor(model => model.soNguoi, new { @class = "form-control", @type = "number", @step = "0.01" })
+        @Html.ValidationMessageFor(model => model.soNguoi)
+    </div>
+
+    @Html.HiddenFor(model => model.maPDP)
+
+    <button type="submit" class="btn btn-primary">Thanh toán</button>
+}
