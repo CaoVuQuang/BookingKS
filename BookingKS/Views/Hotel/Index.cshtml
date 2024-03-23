@@ -268,6 +268,24 @@
             <h6 class="section-title text-center text-primary text-uppercase">Danh sách phòng</h6>
             <h1 class="mb-5">Khám Phá <span class="text-primary text-uppercase">Danh Sách Phòng</span></h1>
         </div>
+
+        <div class="dropdown show">
+            <a class="btn btn-secondary dropdown-toggle" href="@Url.Action("Room", "Hotel")" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color:#FEA116">
+                Xem Theo Loại Phòng
+            </a>
+
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" href="../../?searchString=single">Single</a>
+                <a class="dropdown-item" href="../../?searchString=Triple 2">Triple 2</a>
+                <a class="dropdown-item" href="../../?searchString=Triple 3">Triple 3</a>
+                <a class="dropdown-item" href="../../?searchString=Gia Đình">Gia Đình</a>
+                <a class="dropdown-item" href="../../?searchString=Sang Trọng">Sang Trọng</a>
+                <a class="dropdown-item" href="../../?searchString=Giá Rẻ">Giá Rẻ</a>
+                <a class="dropdown-item" href="../../?searchString=TWIN">TWIN</a>
+            </div>
+            <h1></h1>
+        </div>
+
         <div class="row g-4">
             @foreach (var item in Model)
             {
@@ -341,7 +359,7 @@
                 <h1 class="text-white mb-4">Khám Phá Khách Sạn Có Thương Hiệu</h1>
                 <p class="text-white mb-4">Để những chuyến công tác của bạn trở nên nhẹ nhàng, thoải mái chính là việc lựa chọn một khách sạn cao cấp để lưu trú trong suốt thời gian đi công tác. Những khách sạn sang trọng với nhiều dịch vụ cao cấp, gần trung tâm và nơi công tác vừa giúp cho bạn được thư thả, tận hưởng thời gian nghỉ ngơi.</p>
                 <a href="@Url.Action("Room", "Hotel")" class="btn btn-primary py-md-3 px-md-5 me-3">Phòng</a>
-                <a href="@Url.Action("Booking", "Hotel")" class="btn btn-light py-md-3 px-md-5">Đặt Ngay</a>
+                <a href="@Url.Action("Contact", "Hotel")" class="btn btn-light py-md-3 px-md-5">Đặt Ngay</a>
             </div>
         </div>
         <div class="col-md-6">

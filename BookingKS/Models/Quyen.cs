@@ -6,34 +6,24 @@ namespace BookingKS.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("LoaiPhong")]
-    public partial class LoaiPhong
+    [Table("Quyen")]
+    public partial class Quyen
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public LoaiPhong()
+        public Quyen()
         {
-            Phongs = new HashSet<Phong>();
+            DanhSachQuyens = new HashSet<DanhSachQuyen>();
         }
 
         [Key]
-        public int ma_LP { get; set; }
+        [StringLength(50)]
+        public string IDQuyen { get; set; }
 
-        [StringLength(10)]
-        public string tenLP { get; set; }
-
-        [StringLength(250)]
-        public string hinhAnh { get; set; }
-
-        public int? SC { get; set; }
-
-        public decimal? DG { get; set; }
-
-        [StringLength(500)]
-        public string MT { get; set; }
-
-        
+        [Required]
+        [StringLength(100)]
+        public string TenQuyen { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Phong> Phongs { get; set; }
+        public virtual ICollection<DanhSachQuyen> DanhSachQuyens { get; set; }
     }
 }

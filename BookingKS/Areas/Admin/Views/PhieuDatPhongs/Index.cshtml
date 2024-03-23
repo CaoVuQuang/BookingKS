@@ -3,7 +3,7 @@
 @{
     ViewBag.Title = "Index";
 }
-<h2>DANH SÁCH PHIẾU THUÊ PHÒNG</h2>
+<h2>DANH SÁCH PHIẾU ĐẶT PHÒNG</h2>
 <p>
     @Html.ActionLink("Thêm", "Create")
 </p>
@@ -35,7 +35,7 @@
                     <tr>
                         <td>@item.maPDP</td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.maKH)
+                            @Html.DisplayFor(modelItem => item.KhachHang.tenKH)
                         </td>
                         
                         <td>@item.ngayDen</td>

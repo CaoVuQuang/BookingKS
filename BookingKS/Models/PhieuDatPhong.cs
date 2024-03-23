@@ -12,7 +12,7 @@ namespace BookingKS.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public PhieuDatPhong()
         {
-            CT_PhieuDatPhong = new HashSet<CT_PhieuDatPhong>();
+            
             PhieuThuePhongs = new HashSet<PhieuThuePhong>();
         }
 
@@ -31,14 +31,15 @@ namespace BookingKS.Models
 
         public int? maKH { get; set; }
 
-        public int? maNV { get; set; }
+        public int maNV { get; set; }
+        public bool tinhTrang { get; set; }
 
-        public bool? xacnhan { set; get; }
 
-        
+
+
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<CT_PhieuDatPhong> CT_PhieuDatPhong { get; set; }
+        
 
         public virtual KhachHang KhachHang { get; set; }
 

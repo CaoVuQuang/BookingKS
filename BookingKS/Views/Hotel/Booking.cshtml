@@ -1,11 +1,15 @@
 ﻿
-    @model BookingKS.Models.Phong
+@model BookingKS.Models.Phong
 
 
 @{
     ViewBag.Title = "Booking";
     Layout = "~/Views/Shared/_LayoutKhachSan.cshtml";
 }
+
+
+<!-- Sử dụng CDN -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 <!-- Page Header Start -->
 <div class="container-fluid page-header mb-5 p-0" style="background-image: url(/Content/Theme_KS/img/carousel-1.jpg);">
@@ -15,7 +19,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb justify-content-center text-uppercase">
                     <li class="breadcrumb-item"><a href="@Url.Action("Index", "Hotel")">Trang Chủ</a></li>
-                   
+
                     <li class="breadcrumb-item text-white active" aria-current="page">Đặt Phòng</li>
                 </ol>
             </nav>
@@ -44,17 +48,18 @@
                         <div class="col-md-3">
                             <select class="form-select">
                                 <option selected>Số người</option>
-                                <option value="1">Adult 1</option>
-                                <option value="2">Adult 2</option>
-                                <option value="3">Adult 3</option>
+                                <option value="1">1 người</option>
+                                <option value="2">2 người</option>
+                                <option value="3">3 người</option>
                             </select>
                         </div>
                         <div class="col-md-3">
                             <select class="form-select">
                                 <option selected>Loại phòng</option>
-                                <option value="1">Child 1</option>
-                                <option value="2">Child 2</option>
-                                <option value="3">Child 3</option>
+                                <option value="1">Gia đình</option>
+                                <option value="2">Cặp đôi</option>
+                                <option value="3">Sang trọng</option>
+                                <option value="4">Giá rẻ</option>
                             </select>
                         </div>
                     </div>
@@ -94,7 +99,7 @@
             </div>
             <div class="col-lg-6">
                 <div class="wow fadeInUp" data-wow-delay="0.2s">
-                                      
+
                     @using (Html.BeginForm("Booking", "Hotel", FormMethod.Post))
                     {
                         @Html.AntiForgeryToken()
@@ -117,24 +122,63 @@
                                 <label for="cccd">CCCD</label>
                             </div>
                         </div>
+                        @*<div class="col-md-6">
+            <div class="form-floating">
+                <input type="text" class="form-control" name="gioiTinh" id="gioitinh" placeholder="Your Email">
+                <label for="gioitinh">Giới tính</label>
+            </div>
+        </div>*@
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" name="gioiTinh" id="gioitinh" placeholder="Your Email">
+                                <select class="form-control" name="gioiTinh" id="gioitinh" placeholder="Your Gender">
+                                    <option value="nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                    <option value="Khác">Khác</option>
+                                </select>
                                 <label for="gioitinh">Giới tính</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating date" id="date3" data-target-input="nearest">
+                                <input type="datetime-local" class="form-control datetimepicker-input" name="ngayDen" id="checkin" placeholder="Check In" data-target="#date3" data-toggle="datetimepicker" required />
+                                <label for="checkin">Ngày đến</label>
+                                <p class="help-block"></p>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating date" id="date3" data-target-input="nearest">
-                                <input type="text" class="form-control datetimepicker-input" name="ngayDen" id="checkin" placeholder="Check In" data-target="#date3" data-toggle="datetimepicker" />
-                                <label for="checkin">Ngày đến</label>
+                                <input type="datetime-local" class="form-control datetimepicker-input" name="ngayDi" id="checkin" placeholder="Check In" data-target="#date4" data-toggle="datetimepicker" required />
+                                <label for="checkin">Ngày đi</label>
+                                <p class="help-block"></p>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-floating date" id="date4" data-target-input="nearest">
-                                <input type="text" class="form-control datetimepicker-input" name="ngayDi" id="checkout" placeholder="Check Out" data-target="#date4" data-toggle="datetimepicker" />
-                                <label for="checkout">Ngày đi</label>
-                            </div>
-                        </div>
+
+                        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+                        <script>
+                            $(document).ready(function () {
+                                // Lấy ngày và giờ hiện tại
+                                var currentDate = new Date();
+                                var currentDateString = currentDate.toISOString().slice(0, 16);
+
+                                // Thiết lập giá trị min cho cả hai trường
+                                $('input[name="ngayDen"]').attr('min', currentDateString);
+                                $('input[name="ngayDi"]').attr('min', currentDateString);
+
+                                // Theo dõi sự kiện input để cập nhật giá trị min khi người dùng chọn ngày
+                                $('input[name="ngayDen"]').on('input', function () {
+                                    $('input[name="ngayDi"]').attr('min', $(this).val());
+                                });
+
+                                $('input[name="ngayDi"]').on('input', function () {
+                                    $('input[name="ngayDen"]').attr('max', $(this).val());
+                                });
+                            });
+                        </script>
+
+
+
+
                         <div class="col-md-6">
                             <div class="form-floating">
                                 <input type="text" class="form-control" name="sdt" id="sdt" placeholder="Your Email">
@@ -179,17 +223,17 @@
 
                         <div class="col-12">
                             <button class="btn btn-primary w-100" id="btn" onclick="myFunction()">Xác nhận</button>
-                            <script>
+                            @*<script>
                                 function myFunction() {
-                                    alert("Bạn đã đặt");
+                                    alert("Bạn đã đặt phòng thành công. Vui lòng thanh toán để hoàn tất");
                                 }
-                            </script>
+                            </script>*@
                         </div>
 
-                        <div class="col-12">
-                            <a href="/ShoppingCart/PaymentWithPaypal" class="btn btn-success">Thanh Toán</a>
-                           
-                        </div>
+                        @*<div class="col-12">
+            <a href="/ShoppingCart/PaymentWithPaypal" class="btn btn-success">Thanh Toán</a>
+
+        </div>*@
                     </div>
                     }
 

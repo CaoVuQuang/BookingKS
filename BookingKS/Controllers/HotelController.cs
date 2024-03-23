@@ -17,17 +17,29 @@ namespace BookingKS.Controllers
     {
         private HotelContext db = new HotelContext();
         // GET: Hotel
-        public ActionResult Index(int? page)
+        //public ActionResult Index(int? page)
+        //{
+        //    const int PAGE_SIZE = 6; // Số sản phẩm hiển thị trên mỗi trang
+        //    int pageNumber = (page ?? 1); // Trang hiện tại (mặc định là trang 1)
+
+        //    var listHotel = db.Phongs.OrderBy(m => m.maPhong).Skip((pageNumber - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
+
+        //    ViewBag.CurrentPage = pageNumber;
+        //    ViewBag.TotalPages = Math.Ceiling((double)db.Phongs.Count() / PAGE_SIZE);
+
+        //    return View("Index", listHotel);                      
+        //}
+        public ActionResult Index(int? page, string searchString)
         {
-            const int PAGE_SIZE = 6; // Số sản phẩm hiển thị trên mỗi trang
-            int pageNumber = (page ?? 1); // Trang hiện tại (mặc định là trang 1)
+            ViewBag.KeyWord = searchString;
+            if (page == null)
+                page = 1;
+            int pageSize = 6;
+            int pageNumber = (page ?? 1);
 
-            var listHotel = db.Phongs.OrderBy(m => m.maPhong).Skip((pageNumber - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
-
+            ViewBag.TotalPages = Math.Ceiling((double)db.Phongs.Count() / pageSize);
             ViewBag.CurrentPage = pageNumber;
-            ViewBag.TotalPages = Math.Ceiling((double)db.Phongs.Count() / PAGE_SIZE);
-
-            return View("Index", listHotel);                      
+            return View(Phong.GetAll(searchString).ToPagedList(page.Value, pageSize));
         }
         public ActionResult Details(int? Id)
         {
@@ -76,7 +88,7 @@ namespace BookingKS.Controllers
            
         }
         [HttpPost]
-        public ActionResult Booking(KhachHang khachhang, PhieuDatPhong phieudatphong, CT_PhieuDatPhong ctphieudatphong, SendMail sendMail)
+        public ActionResult Booking(KhachHang khachhang, PhieuDatPhong phieudatphong,Phong phong,  SendMail sendMail)
         {
 
             if (ModelState.IsValid)
@@ -93,15 +105,48 @@ namespace BookingKS.Controllers
                 db.SaveChanges();
 
                 // Lưu thông tin Phiếu đặt phòng
-                PhieuDatPhong pdp = new PhieuDatPhong();                             
+
+                DateTime currentDate = DateTime.Now.Date;
+                //if (phieudatphong.ngayDen < currentDate || phieudatphong.ngayDi < currentDate)
+                //{
+                //    ModelState.AddModelError("", "Ngày đến và ngày đi không thể đặt trong quá khứ.");
+                //    return View();
+                //}
+
+                //// Kiểm tra ngày đến phải trước ngày đi
+                //if (phieudatphong.ngayDen > phieudatphong.ngayDi)
+                //{
+                //    ModelState.AddModelError("", "Ngày đến phải trước ngày đi.");
+                //    return View();
+                //}
+
+                if (phieudatphong.ngayDen < currentDate || phieudatphong.ngayDi < currentDate)
+                {
+                    ModelState.AddModelError("", "Ngày đến và ngày đi không thể đặt trong quá khứ.");
+                    return View();
+                }
+
+                // Kiểm tra ngày đến phải trước ngày đi
+                if (phieudatphong.ngayDen > phieudatphong.ngayDi)
+                {
+                    ModelState.AddModelError("", "Ngày đến phải trước ngày đi.");
+                    return View();
+                }
+
+                // Lưu thông tin Phiếu đặt phòng
+                PhieuDatPhong pdp = new PhieuDatPhong();
                 pdp.ngayDen = phieudatphong.ngayDen;
                 pdp.ngayDi = phieudatphong.ngayDi;
                 pdp.tongTienCoc = 500000;
-                pdp.soNguoi = phieudatphong.soNguoi;                
-                pdp.maNV= phieudatphong.maNV;
+                pdp.soNguoi = phieudatphong.soNguoi;
+                pdp.maNV = 1;
                 pdp.maKH = kh.maKH;
+                pdp.tinhTrang = false; // Set default to false
                 db.PhieuDatPhongs.Add(pdp);
                 db.SaveChanges();
+                return RedirectToAction("PaymentWithPaypal", "ShoppingCart");
+
+
 
                 //sendMail
                 decimal tongTien = (decimal)pdp.tongTienCoc;
@@ -109,9 +154,9 @@ namespace BookingKS.Controllers
                 mail.To.Add(khachhang.email);
                 mail.From = new MailAddress("ptr210701@gmail.com");
                 mail.Subject = "Xác nhận đơn hàng từ Hotel QP";
-                string Body = $"Xin chào,<br /><br />" +
-                              $"Bạn đã đặt PHÒNG thành công với mã phòng {ctphieudatphong.maPhong} và tổng tiền cọc là {tongTien.ToString("N0")} VNĐ." +
-                              $" Vui lòng thanh toán trước 2h để hoàn tất thủ tục nhận phòng<br /><br />" +
+                string Body = $"Xin chào, {kh.tenKH}<br /><br />" +
+                              $"Bạn đã đặt PHÒNG thành công với mã phòng {phong.maPhong} và tổng tiền cọc là {tongTien.ToString("N0")} VNĐ." +
+                              $" Vui lòng thanh toán để hoàn tất thủ tục nhận phòng<br /><br />" +
                               $"Trân trọng,<br />Hotel QP";
 
                 mail.Body = Body;
@@ -127,41 +172,26 @@ namespace BookingKS.Controllers
 
                 // Lưu chi tiết phiếu đặt phòng
 
-                CT_PhieuDatPhong ctpdp = new CT_PhieuDatPhong();
-                ctpdp.maPDP = pdp.maPDP;
-                ctpdp.maPhong = ctphieudatphong.maPhong;
-                ctpdp.tienCoc = pdp.tongTienCoc;
-                db.CT_PhieuDatPhong.Add(ctpdp);
-                db.SaveChanges();
+                //CT_PhieuDatPhong ctpdp = new CT_PhieuDatPhong();
+                //ctpdp.maPDP = pdp.maPDP;
+                //ctpdp.maPhong = ctphieudatphong.maPhong;
+                //ctpdp.tienCoc = pdp.tongTienCoc;
+                //db.CT_PhieuDatPhong.Add(ctpdp);
+                //db.SaveChanges();
 
-                TempData["maPDP"] = ctpdp.maPDP;
+                //TempData["maPDP"] = ctpdp.maPDP;
+                //return RedirectToAction("PaymentWithPaypal", "ShoppingCart");
+
+                
+
+                
                 return RedirectToAction("PaymentWithPaypal", "ShoppingCart");
             }
                              
 
             return View();
 
-        }
-        public ActionResult Thanhtoan(int id)
-        {
-            PhieuDatPhong PTT = db.PhieuDatPhongs.Find(id);
-            if (PTT == null)
-            {
-                return HttpNotFound();
-            }
-
-            return View(PTT);
-            
-        }
-        [HttpPost]
-        public ActionResult Thanhtoan()
-        {
-
-            return View();
-        }
-
-
-
+        }             
 
         public ActionResult Contact()
         {           

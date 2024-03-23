@@ -14,6 +14,10 @@ namespace BookingKS.Controllers
 
         public ActionResult SuccessView()
         {
+            PhieuDatPhong pdp = new PhieuDatPhong();
+            pdp.tinhTrang = true;
+            db.PhieuDatPhongs.Add(pdp);
+            db.SaveChanges();
             return View();
         }
 
@@ -70,7 +74,7 @@ namespace BookingKS.Controllers
                 return View("FailureView");
             }
            
-            return View("SuccessView");
+            return RedirectToAction ("SuccessView", "ShoppingCart");
         }
         private PayPal.Api.Payment payment;
         private Payment ExecutePayment(APIContext apiContext, string payerId, string paymentId)
@@ -87,6 +91,7 @@ namespace BookingKS.Controllers
         }
         private Payment CreatePayment(APIContext apiContext, string redirectUrl)
         {
+            
             //create itemlist and add item objects to it  
             var itemList = new ItemList()
             {
